@@ -1,0 +1,22 @@
+# Android build artifacts
+build/
+.gradle/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+output.json
+release/
+
+# IDE
+.vscode/
+*.swp
+*.swo
