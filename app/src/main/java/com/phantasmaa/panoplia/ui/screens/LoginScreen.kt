@@ -13,10 +13,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.phantasmaa.panoplia.data.local.SessionManager
-import com.phantasmaa.panoplia.data.model.User
 import com.phantasmaa.panoplia.data.repo.PanopliaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,8 +79,11 @@ fun LoginScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    LaunchedEffect(vm.state.value) {
-        if (vm.state.value is LoginState.Success) onSuccess()
+    val state by vm.state.collectAsState()
+
+    // Navega solo cuando el state pasa a Success
+    LaunchedEffect(state) {
+        if (state is LoginState.Success) onSuccess()
     }
 
     Column(
@@ -97,9 +99,10 @@ fun LoginScreen(
 
         OutlinedTextField(
             value = username,
-            onValueChange = { username = it; vm.state.value.let { _ -> } },
+            onValueChange = { username = it },
             label = { Text("Usuario") },
             singleLine = true,
+            enabled = state !is LoginState.Loading,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(12.dp))
@@ -108,6 +111,7 @@ fun LoginScreen(
             onValueChange = { password = it },
             label = { Text("Contraseña") },
             singleLine = true,
+            enabled = state !is LoginState.Loading,
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
@@ -115,16 +119,19 @@ fun LoginScreen(
 
         Button(
             onClick = { vm.login(username, password) },
-            enabled = vm.state.value !is LoginState.Loading,
+            enabled = state !is LoginState.Loading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(if (vm.state.value is LoginState.Loading) "Conectando..." else "Entrar")
+            Text(if (state is LoginState.Loading) "Conectando..." else "Entrar")
         }
 
-        val s = vm.state.value
-        if (s is LoginState.Error) {
+        if (state is LoginState.Error) {
             Spacer(Modifier.height(12.dp))
-            Text(s.msg, color = MaterialTheme.colorScheme.error)
+            Text(
+                (state as LoginState.Error).msg,
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
+

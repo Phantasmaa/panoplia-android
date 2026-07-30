@@ -13,7 +13,7 @@ import retrofit2.http.Streaming
 
 interface PanopliaApi {
 
-    @POST("/auth/verify")
+    @POST("/api/auth/login")
     suspend fun login(@Body req: LoginRequest): LoginResponse
 
     @GET("/api/health")

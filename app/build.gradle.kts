@@ -18,7 +18,7 @@ android {
         versionName = "0.1.0"
 
         // Backend base URL is overridable per build type.
-        buildConfigField("String", "API_BASE_URL", "\"https://toll-bra-microphone-steven.trycloudflare.com\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://aerial-admissions-holdem-faculty.trycloudflare.com\"")
     }
 
     buildTypes {
