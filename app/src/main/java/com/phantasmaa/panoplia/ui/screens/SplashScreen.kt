@@ -9,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,14 +30,14 @@ class SplashViewModel @Inject constructor(
     private val session: SessionManager
 ) : ViewModel() {
 
-    private val _hasSession = MutableStateFlow<Boolean?>(null)
-    val hasSession: StateFlow<Boolean?> = _hasSession
-
-    init {
-        viewModelScope.launch {
-            _hasSession.value = session.user.first() != null
+    val hasSession: StateFlow<Boolean?> = session.user
+        .let { flow ->
+            MutableStateFlow<Boolean?>(null).also { state ->
+                viewModelScope.launch {
+                    state.value = flow.first() != null
+                }
+            }
         }
-    }
 }
 
 @Composable
@@ -44,8 +46,10 @@ fun SplashScreen(
     onLoggedOut: () -> Unit,
     vm: SplashViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(vm.hasSession.value) {
-        when (vm.hasSession.value) {
+    val hasSession by vm.hasSession.collectAsState()
+
+    LaunchedEffect(hasSession) {
+        when (hasSession) {
             true -> onLoggedIn()
             false -> onLoggedOut()
             null -> {} // still loading
@@ -61,3 +65,4 @@ fun SplashScreen(
         CircularProgressIndicator(modifier = Modifier.size(48.dp))
     }
 }
+

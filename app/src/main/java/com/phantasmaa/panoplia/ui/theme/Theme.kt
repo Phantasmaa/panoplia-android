@@ -44,11 +44,11 @@ private val LightScheme = lightColorScheme(
 
 @Composable
 fun PanopliaTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(), // dark by default
+    darkTheme: Boolean = true, // FORZADO dark por ahora (MIUI bug)
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = if (darkTheme) DarkScheme else LightScheme,
+        colorScheme = DarkScheme,
         content = content
     )
 }
