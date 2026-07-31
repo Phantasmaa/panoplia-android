@@ -31,6 +31,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 sealed interface LoginState {
@@ -62,8 +63,28 @@ class LoginViewModel @Inject constructor(
                     session.save(resp.user)
                     _state.value = LoginState.Success
                 } else {
-                    _state.value = LoginState.Error(resp.error ?: "Credenciales inválidas")
+                    // Prefer the human-readable message from the backend over the
+                    // machine error code. "bad_credentials" is not what users
+                    // want to see — they want "Usuario o contraseña incorrectos".
+                    val friendly = resp.message
+                        ?: resp.error
+                            ?.takeIf { it.isNotBlank() && it != "bad_credentials" }
+                        ?: "Usuario o contraseña incorrectos"
+                    _state.value = LoginState.Error(friendly)
                 }
+            } catch (e: HttpException) {
+                val httpCode = e.code()
+                val msg = when (httpCode) {
+                    401 -> "Usuario o contraseña incorrectos"
+                    403 -> "No tenés permiso para entrar"
+                    in 500..599 -> "El servidor tuvo un problema, probá en un rato"
+                    else -> "Error de red (HTTP $httpCode)"
+                }
+                _state.value = LoginState.Error(msg)
+            } catch (e: java.net.UnknownHostException) {
+                _state.value = LoginState.Error("Sin conexión a internet")
+            } catch (e: java.net.ConnectException) {
+                _state.value = LoginState.Error("No se pudo contactar al servidor")
             } catch (e: Exception) {
                 _state.value = LoginState.Error("Error de red: ${e.message ?: e.javaClass.simpleName}")
             }

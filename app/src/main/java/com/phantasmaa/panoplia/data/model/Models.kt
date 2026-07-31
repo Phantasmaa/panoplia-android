@@ -13,7 +13,9 @@ data class LoginRequest(
 data class LoginResponse(
     val ok: Boolean,
     @Json(name = "user") val user: User? = null,
-    val error: String? = null
+    val error: String? = null,
+    /** Friendly message from the backend (e.g. "Usuario o contraseña incorrectos"). */
+    val message: String? = null,
 )
 
 @JsonClass(generateAdapter = true)
