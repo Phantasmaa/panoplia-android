@@ -1,9 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -14,11 +11,17 @@ android {
         applicationId = "com.phantasmaa.panoplia"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
 
-        // Backend base URL is overridable per build type.
-        buildConfigField("String", "API_BASE_URL", "\"https://aerial-admissions-holdem-faculty.trycloudflare.com\"")
+        // Default landing URL for the WebView. The user can override at
+        // runtime via the in-app URL bar in debug builds. For release,
+        // bake it in.
+        buildConfigField(
+            "String",
+            "WEB_BASE_URL",
+            "\"https://aerial-admissions-holdem-faculty.trycloudflare.com\""
+        )
     }
 
     buildTypes {
@@ -30,7 +33,10 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -43,8 +49,8 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        compose = true
         buildConfig = true
+        viewBinding = true
     }
     packaging {
         resources {
@@ -60,31 +66,13 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.datastore.preferences)
-    debugImplementation(libs.androidx.ui.tooling)
-
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
-
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.moshi)
-    implementation(libs.okhttp.core)
-    implementation(libs.okhttp.logging)
-    implementation(libs.moshi.kotlin)
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
-
-    implementation(libs.coil.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.google.android.material)
+    implementation(libs.androidx.webkit)
+    implementation(libs.androidx.constraintlayout)
+    implementation("androidx.core:core-ktx:1.13.1")
 
     testImplementation("junit:junit:4.13.2")
 }

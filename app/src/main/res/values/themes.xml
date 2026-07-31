@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.Panoplia" parent="android:Theme.Material.NoActionBar">
+<resources xmlns:tools="http://tools.android.com/tools">
+    <!-- Base theme used by AppCompatActivity / WebViewActivity.
+         Material 3 dark theme, no action bar (we bring our own toolbar). -->
+    <style name="Theme.Panoplia" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/bg_root</item>
         <item name="android:navigationBarColor">@color/bg_root</item>
         <item name="android:windowBackground">@color/bg_root</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="colorPrimary">@color/accent_blue</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="colorError">@color/error_red</item>
     </style>
 </resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- App-scoped Downloads dir — used by DownloadManager to hand files back -->
+    <files-path name="downloads" path="downloads/" />
+    <cache-path name="cache" path="." />
+    <external-files-path name="ext_downloads" path="Download/" />
+    <external-cache-path name="ext_cache" path="." />
+</paths>
